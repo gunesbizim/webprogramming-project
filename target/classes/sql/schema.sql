@@ -1,10 +1,18 @@
-create table products (id identity primary key, 
-					title varchar(50), 
-					productImage varchar(100),
-					productDescription varchar(1000),
-					price double(7, 2),
-					categoryId varchar(50));
-					
 CREATE TABLE categories (id identity primary key, title VARCHAR(50)); 
-				 
-CREATE TABLE orders (id identity primary key, ownerEmail VARCHAR(100), ownerName VARCHAR(100), address VARCHAR(250), products VARCHAR(1000),orderDate DATETIME); 
+
+create table products (id identity primary key, 
+					title varchar(50),
+					category_id int,
+					productimage varchar(100),
+					productdescription varchar(1000),
+					price decimal(7,2),
+					foreign key(category_id) references categories(id));
+CREATE TABLE orders (id identity primary key, 
+name VARCHAR(100),  
+email VARCHAR(100),  
+address VARCHAR(250), 
+preferreddate DATE,
+ordertime TIMESTAMP,
+phone VARCHAR(17),
+items ARRAY); 
+									 

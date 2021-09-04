@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -23,11 +25,11 @@ public class Product {
 	private String title;
 	
 	@Size (min = 4, max = 100)
-	@Column (name = "productImage")
+	@Column (name = "productimage")
 	private String productImage;
 	
 	@Size (min = 20, max = 1000)
-	@Column (name = "productDescription")
+	@Column (name = "productdescription")
 	private String productDescription;
 	
 	
@@ -35,6 +37,14 @@ public class Product {
 	@Max (value = 9999999)
 	@Column (name = "price")
 	private double price;
+	/*
+	@Column (name="categoryId")
+	private String categoryId;
+	*/
+	
+	@ManyToOne
+	@JoinColumn(name="category_id", nullable=false)
+	private Category category;
 	
 	public long getId() {
 		return id;
@@ -75,15 +85,5 @@ public class Product {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-
-	public String getCategoryId() {
-		return categoryId;
-	}
-
-	public void setCategoryId(String categoryId) {
-		this.categoryId = categoryId;
-	}
-
-	@Column (name="categoryId")
-	private String categoryId;
+	
 }

@@ -1,0 +1,78 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>Cart</title>
+</head>
+<body >
+	<h1>Cart</h1>
+	<h4><a href="/">All Products</a></h4>
+	<div>
+		<table>
+			<tr>
+				<th>Image</th>
+				<th>Title</th>
+				<th>Quantity</th>
+				<th>Delete</th>
+			</tr>
+			<tr th:unless="${#lists.isEmpty(cart.items)}" th:each="soi : ${cart.items}">
+				<td>
+					<a th:href="@{/product/{pid}(pid=${soi.getItemID()})}">
+						<img class="cartimage" th:src="${soi.getImageUrl()}" >
+					</a>
+				</td>
+				<td th:text="${soi.getTitle()}"></td>
+				<td>
+					<form action="/updatequantity">	
+						<input type="hidden" th:name="pid" th:value="${soi.getItemID()}">
+						<input type="number" th:value="${soi.getQuantity()}" th:name="qnt">
+						<input type="submit" >				
+					</form>	
+					<a th:href="@{/updatequantity?pid={pid}&qnt=0(pid=${soi.getItemID()})}">REMOVE ITEM</a>
+				</td>
+			</tr>
+			<tr th:unless="${!#lists.isEmpty(cart.items)}">
+				<td colspan="4"><a href="/" style="font-size:30px">No Products, Click to Browse</a></td>
+			</tr>
+		</table>
+	</div>
+	
+	<div class="orderinfoform">
+		<form action="/purchase" th:object="${order}">
+			<table>
+						
+			<textarea cols="50" rows="10" th:field="*{adress}"></textarea>
+				<tr>
+					<td>Full Name</td>
+					<td><input type="text" class="orderinput" th:field="*{name}"></td>
+					<td th:errors="*{name}" class="errors"></td>
+				</tr>
+				<tr>
+					<td>Email</td>
+					<td><input type="text" class="orderinput" th:field="*{email}"></td>
+					<td th:errors="*{email}" class="errors"></td>				
+				</tr>
+				<tr>
+					<td>Adress</td>
+					<td><textarea cols="50" rows="10" th:field="*{adress}"></textarea></td>
+					<td th:errors="*{adress}" class="errors"></td>			
+				</tr>
+				<tr>
+					<td>Prefferred Date</td>
+					<td><input type="date" class="orderinput" th:field="*{preferredDate}"></td>
+					<td th:error="*{preferredDate}" class="errors"></td>
+				</tr>
+				<tr>
+					<td>Phone</td>
+					<td><input type="date" class="orderinput" th:field="*{phone}"></td>
+					<td th:error="*{phone}" class="errors"></td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="Order"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>

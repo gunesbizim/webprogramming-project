@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>List</title>
+</head>
+<body >
+	<h1 th:text="${product.title}"></h1>
+	<table>
+		<tr>
+		<td><img class="productDispImg" th:src="${product.productImage}"></td>
+		<td>
+			<p th:text="${product.productDescription}"></p>
+			<h4 class="pricetag" th:text="${product.price}"></h4>
+			<form th:action="@{/buy/{pid}(pid=${product.id})}" th:object="${soi}">
+				<input th:field="*{product}" type="hidden">s
+				<input type="number"  th:field="*{quantity}">
+				<input type="submit">
+			</form>
+		</td>
+		</tr>
+	</table>
+	<h5><a href="/">All Products</a></h5>
+</body>
+</html>
