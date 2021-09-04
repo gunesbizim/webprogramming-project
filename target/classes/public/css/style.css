@@ -1,0 +1,76 @@
+html{
+	margin-left: 20px;
+	background-color: #e9eee3;
+	font-family: 'Trebuchet MS', sans-serif;
+	font-size: 20px;	
+}
+
+h1, h2, h3, h4, h5, h6{
+	color: #4c9599;
+}
+
+input, select {
+	font-family: 'Trebuchet MS', sans-serif;
+	font-size: 16px;	
+}
+
+table, td{
+	font-size: 18px;
+}
+
+th{
+	background-color: #4c9599;
+	color: #ffffff;
+	padding: 7px;
+}
+
+.bordered td{
+	border: 1px solid #000000;
+}
+
+.error{
+	color: #ff0000;
+}
+
+.box {
+	border: 1px solid #000000;
+}
+
+.small-italic{
+	font-size: 18px;
+	font-style: italic;
+}
+table, tr {
+  border-collapse: collapse;
+  border: 3px solid black;
+  }
+td{
+	
+  border: 1px solid black;
+}
+
+.producthumbnail{
+	width:150px;
+	height:150px;
+}
+.productDispImg{
+  width:300px;
+  height:300px;
+}
+
+.pricetag{
+	color:red;
+}
+
+.cartimage{
+	height:150px;
+}
+
+.orderinfoform{
+	position:absolute;
+	top:130px;
+	right:50px;
+}
+.orderinput{
+	margin:5px;
+}

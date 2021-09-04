@@ -1,0 +1,44 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>List</title>
+</head>
+
+<body>
+	<h2 th:text="${headerText}"></h2>
+	<div>
+		<form action="/products" method="get" th:object="${cId}">
+			<select th:field="*{categoryId}">
+				<option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.title}"></option>
+			</select>
+			<input type="submit" value="Send"><br>
+		</form>
+	<a href="/">Clear Filter</a>
+	</div>
+	<div th:unless="${#lists.isEmpty(products)}">
+		<form action="/send" method="post" th:object="${order}">
+			<table class="box">
+				<tr>
+					<th>Image</th>
+					<th>Product Title</th>
+					<th>Product Descripion</th>
+					<th>Price</th>
+					<th>Quantity</th>
+				</tr>
+				<tr th:each="p : ${products}">
+					<td>
+						<img th:src="${p.productImage}" class="producthumbnail">
+					</td>
+					<td th:text="${p.title}"></td>
+					<td th:text="${p.productDescription}"></td>
+					<td th:text="${p.price}"></td>
+					<td><a th:href="@{/product/{pid}(pid=${p.id})}">Purchase</a><td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+
+</html>
