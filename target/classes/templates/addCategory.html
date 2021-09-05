@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>Admin</title>
+</head>
+<body >
+	<h1>Admin Panel</h1>
+	<form th:action="@{/admin/addCategory/{id}(id = ${c.id})}" th:object="${c}">
+		<table>
+			<tr>
+				<th calspan="3">Add New Category</th>
+			</tr>
+			<tr>
+				<td>Category Title</td>
+				<td><input type="text" th:field="*{title}"></td>
+				<td th:errors="*{title}"></td>
+			</tr>
+			<tr>
+				<td colspan="3"><input type="submit" value="Submit"></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

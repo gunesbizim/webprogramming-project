@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.naming.Binding;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -234,9 +235,17 @@ public class AppController {
 	
 	
 	//////////////////////////////////////////////ADMIN FUNCTINOS/////////////////////////////////////
+	@RequestMapping("/admin")
+	public ModelAndView displayAdminMenu() {
+		ModelAndView mv = new ModelAndView("admin-panel");
+		
+		return mv;
+		
+	}
+	
 	@RequestMapping("/admin/productform")
 	public ModelAndView displayAddProduct() {
-		ModelAndView mv = new ModelAndView("admin-panel");
+		ModelAndView mv = new ModelAndView("addProduct");
 		Product p = new Product();
 		List<Category> categories = service.findAllCategoriesAlphabetic();
 		CategoryId cId = new CategoryId();
@@ -247,6 +256,28 @@ public class AppController {
 		mv.addObject("categories",categories);
 		
 		return mv;
+	}
+	@RequestMapping("/admin/addCategory")
+	public ModelAndView displayAddCategory() {
+		ModelAndView mv = new ModelAndView("addCategory");
+		Category c = new Category();
+		mv.addObject("c", c);
+		return mv;
+	}
+	@RequestMapping("/admin/addCategory/{id}")
+	public ModelAndView addCategory(@ModelAttribute(name = "c") Category c, 
+		BindingResult result) {
+		ModelAndView mv = new ModelAndView();
+		if(result.hasFieldErrors()) {
+			mv.setViewName("addCategory");
+		}else {
+			mv.setViewName("admin-panel");
+			service.saveCategory(c);
+		}
+		
+		return mv;
+		
+		
 	}
 	
 	@RequestMapping(value="/admin/addproduct")
