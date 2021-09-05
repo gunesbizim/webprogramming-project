@@ -307,7 +307,6 @@ public class AppController {
 		mv.addObject("orders", orders);
 		return mv;
 	}
-	
 	@RequestMapping("/all-orders/filterEmail/{email}")
 	public ModelAndView allOrdersEmail(
 			@PathVariable("email") String email) {
