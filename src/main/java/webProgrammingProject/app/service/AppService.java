@@ -32,12 +32,14 @@ public class AppService {
 	OrderRepository orderRepository;
 	
 	public Category getCategoryByID(Long id) {
+		
 		return categoryRepository.getCatogryById(id);
 	}
 	
 	public List<Product> findAllProducts(){
 		return productRepository.findAll();
 	}
+	
 	
 	public List<Category> findAllCategoriesAlphabetic(){
 		return categoryRepository.findAllAlphabetic();
@@ -61,6 +63,9 @@ public class AppService {
 	
 	public void saveOrder(Order order) {
 		orderRepository.save(order);
+	}
+	public void saveCategory(Category cat) {
+		categoryRepository.save(cat);
 	}
 	
 	public List<Order> findAllOrders(){

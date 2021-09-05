@@ -17,9 +17,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	public <S extends Product> S save(S entity);
 	
+	
+	
 	@Query(value = "select * from products where category_id = :cId", nativeQuery = true)
 	public List<Product> findByCategoryId(@Param("cId") long cId);
 	
 	@Query(value = "select * from products where id = :pid", nativeQuery = true)
 	public Product findSingleProductById(@Param("pid") long pid);
+	
 }

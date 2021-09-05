@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.naming.Binding;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -234,19 +236,48 @@ public class AppController {
 	
 	
 	//////////////////////////////////////////////ADMIN FUNCTINOS/////////////////////////////////////
+	@RequestMapping("/admin")
+	public ModelAndView displayAdminMenu() {
+		ModelAndView mv = new ModelAndView("admin-panel");
+		
+		return mv;
+		
+	}
+	
 	@RequestMapping("/admin/productform")
 	public ModelAndView displayAddProduct() {
-		ModelAndView mv = new ModelAndView("admin-panel");
+		ModelAndView mv = new ModelAndView("addProduct");
 		Product p = new Product();
 		List<Category> categories = service.findAllCategoriesAlphabetic();
 		CategoryId cId = new CategoryId();
 		cId.setCategoryId(0);
-		System.out.println("muck");
 		mv.addObject("product", p);
 		mv.addObject("categoryID", cId);
 		mv.addObject("categories",categories);
 		
 		return mv;
+	}
+	@RequestMapping("/admin/addCategory")
+	public ModelAndView displayAddCategory() {
+		ModelAndView mv = new ModelAndView("addCategory");
+		Category c = new Category();
+		mv.addObject("c", c);
+		return mv;
+	}
+	@RequestMapping("/admin/addCategory/{id}")
+	public ModelAndView addCategory(@ModelAttribute(name = "c") Category c, 
+		BindingResult result) {
+		ModelAndView mv = new ModelAndView();
+		if(result.hasFieldErrors()) {
+			mv.setViewName("addCategory");
+		}else {
+			mv.setViewName("admin-panel");
+			service.saveCategory(c);
+		}
+		
+		return mv;
+		
+		
 	}
 	
 	@RequestMapping(value="/admin/addproduct")
@@ -284,6 +315,29 @@ public class AppController {
 		return mv;
 	}
 	
+	@RequestMapping("/admin/editProduct")
+	public ModelAndView editProduct() {
+		ModelAndView mv = new ModelAndView("editProduct");
+		List<Product> allProducts = service.findAllProducts();
+		mv.addObject("products", allProducts);
+		return mv;
+	}
+	
+	@RequestMapping("/admin/editProduct/{id}")
+	public ModelAndView editSpecificProduct(
+			@PathVariable(name="id") long id
+			) {
+		ModelAndView mv = new ModelAndView("editSpecificProduct");
+		Product p = service.findSingleProductById(id);
+		List<Category> categories = service.findAllCategoriesAlphabetic();
+		CategoryId ci = new CategoryId();
+		ci.setCategoryId(0);
+		
+		mv.addObject("product",p);
+		mv.addObject("categories",categories);
+		mv.addObject("categoryID",ci);
+		return mv;
+	}
 	/////////////////////////////ORDER LISTING//////////////////////////////
 	@RequestMapping("/all-orders/all/{listingOpt}")
 	public ModelAndView allOrders(
@@ -316,7 +370,30 @@ public class AppController {
 		
 		return mv;
 	}
-	
+	@RequestMapping("/admin/updateproduct")
+	public ModelAndView updateProduct(
+			@Valid @ModelAttribute Product p,
+			BindingResult result
+			) {
+		ModelAndView mv = new ModelAndView();
+		
+		if(result.hasFieldErrors()) {
+			mv.setViewName("editSpecificProduct");
+			List<Category> categories = service.findAllCategoriesAlphabetic();
+			CategoryId ci = new CategoryId();
+			ci.setCategoryId(0);
+			
+			mv.addObject("product",p);
+			mv.addObject("categories",categories);
+			mv.addObject("categoryID",ci);
+		}else {
+			service.saveProduct(p);
+			mv.setViewName("admin-panel");
+		}
+		
+		return mv;
+		
+	}
 	///////////////////////////FREE FUNCTIONS///////////////////////////////////
 	public void createCart(HttpSession session) {
 		if(session.getAttribute("cart") == null) {
