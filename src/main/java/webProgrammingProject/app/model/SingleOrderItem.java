@@ -1,13 +1,17 @@
 package webProgrammingProject.app.model;
 
+
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class SingleOrderItem {
+
 	
 	@NotNull
 	private Product product;
 	
-	private int quantity;
+	@Min(value=1)
+	private Integer quantity;
 	
 	private double totalProductPrice;
 	
@@ -64,4 +68,5 @@ public class SingleOrderItem {
 		this.quantity += quantity;
 		this.totalProductPrice += product.getPrice() * quantity;
 	}
+
 }

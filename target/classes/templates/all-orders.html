@@ -1,0 +1,22 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>All Orders</title>
+</head>
+<body >
+	<select th:field="${categoryID.categoryId}">
+		<option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.title}"></option>
+	</select>
+	<table>
+		<tr th:each="o : ${orders}">
+			<td th:text="${o.id}"></td>
+			<td th:text="${o.name}"></td>
+			<td th:text="${o.phone}"></td>
+			<td th:text="${o.totalPrice}"></td>
+			<td><a th:href="@{/order/{id}(id=${o.id})}">Details</a></td>
+		</tr>
+	</table>
+</body>
+</html>	

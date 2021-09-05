@@ -14,6 +14,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	public List<Product> findAll();
 	
+	
+	public <S extends Product> S save(S entity);
+	
 	@Query(value = "select * from products where category_id = :cId", nativeQuery = true)
 	public List<Product> findByCategoryId(@Param("cId") long cId);
 	

@@ -1,0 +1,30 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>Order</title>
+</head>
+<body >
+	<h1>Order</h1>
+	<h4><a href="/">All Products</a></h4>
+	<h4>Your Order Link: <a th:text="'localhost:8080/order/'+${order.id}" th:href="@{/order/{id}(id=${order.id})]}"></a></h4>
+	<table>
+		<tr>
+			<th>Order Time</th>
+			<th>Order Status</th>
+			<th></th>
+			<th></th>
+		</tr>
+		<tr>
+			<td th:text="${order.orderTime}"></td>
+			<td th:text="${order.status}"></td>
+			<td th:text="${order.totalPrice}"
+			<td th:unless="${!order.isProcessing()}"><a th:text="Cancel" th:href="@{/cancelorder/{oid}(oid=${order.id})}"></a></td>
+			<td th:unless="${!order.isProcessing()}">You can't undo this process</td>
+		</tr>
+		<tr th:each="p">
+		</tr>
+	</table>
+</body>
+</html>

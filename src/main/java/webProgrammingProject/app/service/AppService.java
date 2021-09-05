@@ -2,6 +2,8 @@ package webProgrammingProject.app.service;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import webProgrammingProject.app.model.Cart;
 import webProgrammingProject.app.model.Category;
 import webProgrammingProject.app.model.Order;
 import webProgrammingProject.app.model.Product;
+import webProgrammingProject.app.model.SingleOrderItem;
 
 @Service
 @Transactional
@@ -27,11 +30,15 @@ public class AppService {
 	@Autowired
 	OrderRepository orderRepository;
 	
+	public Category getCategoryByID(Long id) {
+		return categoryRepository.getCatogryById(id);
+	}
+	
 	public List<Product> findAllProducts(){
 		return productRepository.findAll();
 	}
 	
-	public List<Category> findAllCategories(){
+	public List<Category> findAllCategoriesAlphabetic(){
 		return categoryRepository.findAllAlphabetic();
 	}
 	
@@ -63,15 +70,31 @@ public class AppService {
 		orderRepository.deleteById(id);
 	}
 	
-	public List<Order> findAllOrdersWithEmail(String email){
-		return orderRepository.findAllWithEmail(email);
-	}
-	
 	public List<Order> orderOrdersByOrderDateASC(){
 		return orderRepository.orderByOrderDateASC();
 	}
 	
 	public List<Order> orderOrdersByOrderDateDESC(){
 		return orderRepository.orderByOrderDateDESC();
+	}
+	public Order findOrderById(long id) {
+		return orderRepository.findById(id);
+	}
+	
+	public void saveProduct(Product p) {
+		productRepository.save(p);
+	}
+	
+	public List<Order> findOrdersByEmail(String email){
+		return orderRepository.findByEmail(email);
+	}
+	public void JsonToSOIList(String json) {
+		JSONArray ja = new JSONArray(json);
+		for(int i = 0; i < ja.length(); i++)
+		{
+		      JSONObject object = ja.getJSONObject(i);
+		      System.err.println(object);
+		}
+		
 	}
 } 
