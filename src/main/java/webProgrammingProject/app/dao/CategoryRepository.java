@@ -22,4 +22,6 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 	
 	@Query(value="select title from categories where id = :cId", nativeQuery = true)
 	public String findCategoryTitle(@Param("cId")long cId);
+	
+	public <S extends Category> S save(S entity);
 }
