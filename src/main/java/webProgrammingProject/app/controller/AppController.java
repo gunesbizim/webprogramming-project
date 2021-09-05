@@ -241,7 +241,7 @@ public class AppController {
 		List<Category> categories = service.findAllCategoriesAlphabetic();
 		CategoryId cId = new CategoryId();
 		cId.setCategoryId(0);
-		
+		System.out.println("muck");
 		mv.addObject("product", p);
 		mv.addObject("categoryID", cId);
 		mv.addObject("categories",categories);
