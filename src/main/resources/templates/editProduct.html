@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>List</title>
+</head>
+
+<body>
+	<h2 th:text="${headerText}"></h2>
+	<h2><a href="/cart">Cart</a></h2>
+	<div th:unless="${#lists.isEmpty(products)}">
+		<form action="/send" method="post" th:object="${order}">
+			<table class="box">
+				<tr>
+					<th>Image</th>
+					<th>Product Title</th>
+					<th>Product Descripion</th>
+					<th>Price</th>
+				</tr>
+				<tr th:each="p : ${products}">
+					<td>
+						<img th:src="${p.productImage}" class="producthumbnail">
+					</td>
+					<td th:text="${p.title}"></td>
+					<td th:text="${p.productDescription}"></td>
+					<td th:text="${p.price}"></td>
+					<td><a th:href="@{/admin/editProduct/{pid}(pid=${p.id})}">Edit</a><td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+
+</html>
