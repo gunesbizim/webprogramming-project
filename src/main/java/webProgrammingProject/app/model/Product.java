@@ -24,7 +24,7 @@ public class Product {
 	@Column (name = "title")
 	private String title;
 	
-	@Size (min = 4, max = 100)
+	@Size (min = 10)
 	@Column (name = "productimage")
 	private String productImage;
 	
@@ -33,7 +33,7 @@ public class Product {
 	private String productDescription;
 	
 	
-	@Min (value = 0)
+	@Min (value = 1)
 	@Max (value = 9999999)
 	@Column (name = "price")
 	private double price;
@@ -84,6 +84,14 @@ public class Product {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package webProgrammingProject.app.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -73,7 +74,7 @@ public class Cart {
 				find(id));
 		itemCount--;
 	}
-	public JSONObject[] jsonizeCart() {
+	public String jsonizeCart() {
 		JSONObject finalCart []= new JSONObject[itemCount];
 		int tempIndex = 0;
 		for(SingleOrderItem soi : items ){
@@ -81,8 +82,9 @@ public class Cart {
 			temp.put("id", soi.getItemID());
 			temp.put("qnt", soi.getQuantity());
 			finalCart[tempIndex] = temp;
+			System.err.println(temp.toString());
 		}
-		
-		return finalCart;
+		System.err.println(Arrays.toString(finalCart));
+		return Arrays.toString(finalCart);
 	}
 }

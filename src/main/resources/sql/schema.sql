@@ -10,9 +10,10 @@ create table products (id identity primary key,
 CREATE TABLE orders (id identity primary key, 
 name VARCHAR(100),  
 email VARCHAR(100),  
-address VARCHAR(250), 
+adress VARCHAR(250), 
 preferreddate DATE,
 ordertime TIMESTAMP,
 phone VARCHAR(17),
-items ARRAY); 
-									 
+items CLOB,
+process_status VARCHAR(10)); 
+												 

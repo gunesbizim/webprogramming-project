@@ -1,26 +1,22 @@
 package webProgrammingProject.app.controller;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import webProgrammingProject.app.model.Cart;
@@ -52,7 +48,7 @@ public class AppController {
 		ModelAndView mv = new ModelAndView("products");
 		
 		List<Product> products = service.findAllProducts();
-		List<Category> categories = service.findAllCategories();
+		List<Category> categories = service.findAllCategoriesAlphabetic();
 		
 		CategoryId cId = new CategoryId();
 		cId.setCategoryId(0);
@@ -76,7 +72,7 @@ public class AppController {
 		ModelAndView mv = new ModelAndView("products");
 		
 		List<Product> products = service.findByCategoryId(cId.getCategoryId());
-		List<Category> categories = service.findAllCategories();
+		List<Category> categories = service.findAllCategoriesAlphabetic();
 		
 		mv.addObject("products",products);
 		mv.addObject("categories",categories);
@@ -97,12 +93,8 @@ public class AppController {
 		ModelAndView mv = new ModelAndView("product");
 		
 		Product product = service.findSingleProductById(pid);
-		if(product == null) {
-			//TODO:
-			System.out.println("product is null");
-		}else {			
-			mv.addObject("product",product);
-		}
+		mv.addObject("product",product);
+
 		SingleOrderItem soi = new SingleOrderItem();
 		
 		soi.setProduct(product);
@@ -113,38 +105,35 @@ public class AppController {
 	
 	@RequestMapping(value = "/buy/{pid}", method = RequestMethod.GET)
 	public ModelAndView buyProduct(
-			@ModelAttribute("soi") SingleOrderItem soi,
+			@Valid @ModelAttribute("soi") SingleOrderItem soi,
+			BindingResult result,
 			@PathVariable("pid") long pid,
 			HttpSession session) {
 		/*
 		 * REMEMBER: HTTP Error Handling, redirection and error messages.
 		 */
-		
-		System.out.println("###################");
-		System.out.println(soi.getTitle());
-		System.out.println(soi.getQuantity());
-		System.out.println("###################");
+		ModelAndView mv = new ModelAndView();
 
 		createCart(session);
 		
-
-		Cart cart = (Cart) session.getAttribute("cart");
-		cart.addItem(soi);
-		
-		ModelAndView mv = new ModelAndView("cart");
-		Order order = new Order();
-		
-		mv.addObject("cart",cart);
-		mv.addObject("order",order);		
-		return mv;
-	}
-	
-	
-	public void createCart(HttpSession session) {
-		if(session.getAttribute("cart") == null) {
-			Cart cart = new Cart();
-			session.setAttribute("cart", cart);
+		if(result.hasErrors()) {
+			mv.setViewName("product");
+			mv.addObject("soi",soi);
+			mv.addObject("product",soi.getProduct());
+		}else {
+			Cart cart = (Cart) session.getAttribute("cart");
+			cart.addItem(soi);
+			mv.setViewName("cart");
+			
+			
+			Order order = new Order();
+			
+			mv.addObject("cart",cart);
+			mv.addObject("order",order);		
 		}
+
+		
+		return mv;
 	}
 	
 	
@@ -180,30 +169,175 @@ public class AppController {
 		mv.addObject("order",order);		
 		return mv;
 	}
+	
+	//////////////////////////////ORDER CONTROL////////////////////////////////////
 	@RequestMapping("/purchase")
 	public ModelAndView purchase(
 			@Valid @ModelAttribute Order order,
-			HttpSession session,
-			BindingResult result
+			BindingResult result,
+			HttpSession session
 			){
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-		LocalDateTime dateTime = LocalDateTime.now();
-		String formattedDateTime = dateTime.format(formatter); // "1986-04-08 12:30"		
-		order.setOrderTime(LocalDateTime.parse(formattedDateTime));
+
+		LocalDateTime now = now();
+		order.setOrderTime(now);
 		Cart cart = (Cart) session.getAttribute("cart");
 		ordv.validate(order, result);
-		
+
 		ModelAndView mv = new ModelAndView();
 		if(result.hasErrors()) {
+			System.err.println("we have errors");
+
+			for(FieldError fe : result.getFieldErrors()) {
+				System.err.println(fe);
+			}
 			mv.setViewName("cart");
 			mv.addObject("cart",cart);
 		}else {
-			mv.setViewName("order-result");
+			System.err.println("ELSE");
+
+			order.setStatus("processing");			
 			order.setItems(cart.jsonizeCart());
-			
+			order.setTotalPrice(cart.getCartTotal());
+			service.saveOrder(order);
+			mv.setViewName("order-result");
+			session.removeAttribute("cart");
 		}
+		
+		
+		System.err.println("we passed if case?");
+
 		mv.addObject("order",order);
 		return mv;
 	}
+
+	@RequestMapping("/order/{oid}")
+	public ModelAndView orderDetails(@PathVariable(name="oid") long oid) {
+		ModelAndView mv = new ModelAndView("order-result");
+		Order order = service.findOrderById(oid);
+		mv.addObject("order",order);
+		return mv;
+	}
+	
+	@RequestMapping("/cancelorder/{oid}")
+	public ModelAndView cancelOrder(@PathVariable(name="oid") long oid) {
+		ModelAndView mv = new ModelAndView("order-result");
+		Order order = service.findOrderById(oid);
+		order.setStatus("cancelled");
+		service.saveOrder(order);
+		mv.addObject("order",order);
+		
+		return mv;
+	}
+	
+	
+	//////////////////////////////////////////////ADMIN FUNCTINOS/////////////////////////////////////
+	@RequestMapping("/admin/productform")
+	public ModelAndView displayAddProduct() {
+		ModelAndView mv = new ModelAndView("admin-panel");
+		Product p = new Product();
+		List<Category> categories = service.findAllCategoriesAlphabetic();
+		CategoryId cId = new CategoryId();
+		cId.setCategoryId(0);
+		
+		mv.addObject("product", p);
+		mv.addObject("categoryID", cId);
+		mv.addObject("categories",categories);
+		
+		return mv;
+	}
+	
+	@RequestMapping(value="/admin/addproduct")
+	public ModelAndView addProduct(
+			@Valid @ModelAttribute(name="product") Product product,
+			BindingResult result,
+			@Valid @ModelAttribute(name="categoryID") CategoryId categoryID,
+			BindingResult reult1
+			) {
+
+		for(FieldError fe : result.getFieldErrors()) {
+			System.err.println(fe);
+		}
+		
+		ModelAndView mv = new ModelAndView();
+		if(result.hasErrors()) {
+			mv.setViewName("admin-panel");
+			List<Category> categories = service.findAllCategoriesAlphabetic();
+			mv.addObject("product", product);
+			mv.addObject("categoryId", categoryID);
+			mv.addObject("categories",categories);
+			
+		}else {
+			mv.setViewName("product");
+			Category c = service.getCategoryByID(categoryID.getCategoryId());
+			product.setCategory(c);
+			mv.addObject("product",product);
+			SingleOrderItem soi = new SingleOrderItem();
+			soi.setProduct(product);
+			soi.setQuantity(0);
+			mv.addObject("soi",soi);
+			service.saveProduct(product);
+		}
+		
+		return mv;
+	}
+	
+	/////////////////////////////ORDER LISTING//////////////////////////////
+	@RequestMapping("/all-orders/all/{listingOpt}")
+	public ModelAndView allOrders(
+			@PathVariable("listingOpt") String listingOpt) {
+		
+		List<Order> orders;
+		ModelAndView mv = new ModelAndView("all-orders");
+
+		
+		if(listingOpt.equals("standart")) {
+			orders = service.findAllOrders();
+		}else if(listingOpt.equals("desc")) {
+			orders = service.orderOrdersByOrderDateDESC();
+
+		}else if(listingOpt.equals("asc")){
+			orders = service.orderOrdersByOrderDateASC();
+
+		}else {
+			orders = service.findOrdersByEmail(listingOpt);
+		}
+		service.JsonToSOIList(orders.get(0).getItems());
+		
+		mv.addObject("orders", orders);
+		return mv;
+	}
+	
+	@RequestMapping("/all-orders/filterEmail/{email}")
+	public ModelAndView allOrdersEmail(
+			@PathVariable("email") String email) {
+		
+		List<Order> orders = service.findOrdersByEmail(email);
+		ModelAndView mv = new ModelAndView();
+		
+		return mv;
+	}
+	
+	///////////////////////////FREE FUNCTIONS///////////////////////////////////
+	public void createCart(HttpSession session) {
+		if(session.getAttribute("cart") == null) {
+			Cart cart = new Cart();
+			session.setAttribute("cart", cart);
+		}
+	}
+	
+	private LocalDateTime now() {
+		System.err.println("Getting current time");
+		System.err.println("Creating Formatter");
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+		
+		System.err.println("Creating datetime");
+		LocalDateTime dateTime = LocalDateTime.now();
+
+		System.err.println("dateTimeformat(formatter)");
+		String n = dateTime.format(formatter); 
+		return LocalDateTime.parse(n,formatter);
+	}
+	
 	
 }

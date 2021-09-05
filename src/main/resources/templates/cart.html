@@ -39,10 +39,8 @@
 	</div>
 	
 	<div class="orderinfoform">
-		<form action="/purchase" th:object="${order}">
+		<form action="/purchase" th:object="${order}" th:unless="${#lists.isEmpty(cart.items)}">
 			<table>
-						
-			<textarea cols="50" rows="10" th:field="*{adress}"></textarea>
 				<tr>
 					<td>Full Name</td>
 					<td><input type="text" class="orderinput" th:field="*{name}"></td>
@@ -60,13 +58,16 @@
 				</tr>
 				<tr>
 					<td>Prefferred Date</td>
-					<td><input type="date" class="orderinput" th:field="*{preferredDate}"></td>
-					<td th:error="*{preferredDate}" class="errors"></td>
+					<td><input type="text" class="orderinput" th:field="*{preferredDate}"></td>
+					<td th:errors="*{preferredDate}" class="errors"></td>
+					<td th:errors="*{_preferredDate}" class="errors"></td>
+
 				</tr>
 				<tr>
 					<td>Phone</td>
-					<td><input type="date" class="orderinput" th:field="*{phone}"></td>
-					<td th:error="*{phone}" class="errors"></td>
+					<td><input type="text" class="orderinput" th:field="*{phone}"></td>
+					<td th:errors="*{phone}" class="errors"></td>
+
 				</tr>
 				<tr>
 					<td><input type="submit" value="Order"></td>
