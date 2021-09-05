@@ -316,10 +316,21 @@ public class AppController {
 		return mv;
 	}
 	
-	@RequestMapping("/admin/editProduct/")
+	@RequestMapping("/admin/editProduct")
 	public ModelAndView editProduct() {
 		ModelAndView mv = new ModelAndView("editProduct");
-		
+		List<Product> allProducts = service.findAllProducts();
+		mv.addObject("products", allProducts);
+		return mv;
+	}
+	
+	@RequestMapping("/admin/editProduct/{id}")
+	public ModelAndView editSpecificProduct(
+			@PathVariable(name="id") long id
+			) {
+		ModelAndView mv = new ModelAndView("editSpecificProduct");
+		Product p = service.findSingleProductById(id);
+		mv.addObject("product",p);
 		return mv;
 	}
 	/////////////////////////////ORDER LISTING//////////////////////////////
