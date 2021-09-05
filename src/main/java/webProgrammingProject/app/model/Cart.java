@@ -83,6 +83,7 @@ public class Cart {
 			temp.put("qnt", soi.getQuantity());
 			finalCart[tempIndex] = temp;
 			System.err.println(temp.toString());
+			tempIndex++;
 		}
 		System.err.println(Arrays.toString(finalCart));
 		return Arrays.toString(finalCart);
