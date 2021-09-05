@@ -32,6 +32,7 @@ public class AppService {
 	OrderRepository orderRepository;
 	
 	public Category getCategoryByID(Long id) {
+		
 		return categoryRepository.getCatogryById(id);
 	}
 	

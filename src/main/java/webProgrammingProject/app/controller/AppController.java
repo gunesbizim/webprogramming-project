@@ -251,7 +251,6 @@ public class AppController {
 		List<Category> categories = service.findAllCategoriesAlphabetic();
 		CategoryId cId = new CategoryId();
 		cId.setCategoryId(0);
-		
 		mv.addObject("product", p);
 		mv.addObject("categoryID", cId);
 		mv.addObject("categories",categories);
@@ -316,10 +315,27 @@ public class AppController {
 		return mv;
 	}
 	
-	@RequestMapping("/admin/editProduct/")
+	@RequestMapping("/admin/editProduct")
 	public ModelAndView editProduct() {
 		ModelAndView mv = new ModelAndView("editProduct");
+		List<Product> allProducts = service.findAllProducts();
+		mv.addObject("products", allProducts);
+		return mv;
+	}
+	
+	@RequestMapping("/admin/editProduct/{id}")
+	public ModelAndView editSpecificProduct(
+			@PathVariable(name="id") long id
+			) {
+		ModelAndView mv = new ModelAndView("editSpecificProduct");
+		Product p = service.findSingleProductById(id);
+		List<Category> categories = service.findAllCategoriesAlphabetic();
+		CategoryId ci = new CategoryId();
+		ci.setCategoryId(0);
 		
+		mv.addObject("product",p);
+		mv.addObject("categories",categories);
+		mv.addObject("categoryID",ci);
 		return mv;
 	}
 	/////////////////////////////ORDER LISTING//////////////////////////////
@@ -345,7 +361,6 @@ public class AppController {
 		mv.addObject("orders", orders);
 		return mv;
 	}
-	
 	@RequestMapping("/all-orders/filterEmail/{email}")
 	public ModelAndView allOrdersEmail(
 			@PathVariable("email") String email) {
@@ -355,7 +370,30 @@ public class AppController {
 		
 		return mv;
 	}
-	
+	@RequestMapping("/admin/updateproduct")
+	public ModelAndView updateProduct(
+			@Valid @ModelAttribute Product p,
+			BindingResult result
+			) {
+		ModelAndView mv = new ModelAndView();
+		
+		if(result.hasFieldErrors()) {
+			mv.setViewName("editSpecificProduct");
+			List<Category> categories = service.findAllCategoriesAlphabetic();
+			CategoryId ci = new CategoryId();
+			ci.setCategoryId(0);
+			
+			mv.addObject("product",p);
+			mv.addObject("categories",categories);
+			mv.addObject("categoryID",ci);
+		}else {
+			service.saveProduct(p);
+			mv.setViewName("admin-panel");
+		}
+		
+		return mv;
+		
+	}
 	///////////////////////////FREE FUNCTIONS///////////////////////////////////
 	public void createCart(HttpSession session) {
 		if(session.getAttribute("cart") == null) {
