@@ -15,5 +15,6 @@ preferreddate DATE,
 ordertime TIMESTAMP,
 phone VARCHAR(17),
 items CLOB,
-process_status VARCHAR(10)); 
+process_status VARCHAR(10),
+totalprice DECIMAL(20,2)); 
 												 

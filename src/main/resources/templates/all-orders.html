@@ -6,9 +6,6 @@
 	<title>All Orders</title>
 </head>
 <body >
-	<select th:field="${categoryID.categoryId}">
-		<option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.title}"></option>
-	</select>
 	<table>
 		<tr th:each="o : ${orders}">
 			<td th:text="${o.id}"></td>

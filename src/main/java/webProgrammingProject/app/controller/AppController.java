@@ -199,6 +199,7 @@ public class AppController {
 			order.setItems(cart.jsonizeCart());
 			order.setTotalPrice(cart.getCartTotal());
 			service.saveOrder(order);
+			mv.addObject("soilist",cart.getItems());
 			mv.setViewName("order-result");
 			session.removeAttribute("cart");
 		}
@@ -214,7 +215,9 @@ public class AppController {
 	public ModelAndView orderDetails(@PathVariable(name="oid") long oid) {
 		ModelAndView mv = new ModelAndView("order-result");
 		Order order = service.findOrderById(oid);
+		List<SingleOrderItem> soiList = service.JsonToSOIList(order.getItems());
 		mv.addObject("order",order);
+		mv.addObject("soilist",soiList);
 		return mv;
 	}
 	
@@ -300,9 +303,7 @@ public class AppController {
 
 		}else {
 			orders = service.findOrdersByEmail(listingOpt);
-		}
-		service.JsonToSOIList(orders.get(0).getItems());
-		
+		}		
 		mv.addObject("orders", orders);
 		return mv;
 	}

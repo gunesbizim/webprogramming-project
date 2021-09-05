@@ -1,5 +1,6 @@
 package webProgrammingProject.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -88,13 +89,22 @@ public class AppService {
 	public List<Order> findOrdersByEmail(String email){
 		return orderRepository.findByEmail(email);
 	}
-	public void JsonToSOIList(String json) {
+	public List<SingleOrderItem> JsonToSOIList(String json) {
 		JSONArray ja = new JSONArray(json);
+		List<SingleOrderItem> tempsoi = new ArrayList<>();
 		for(int i = 0; i < ja.length(); i++)
 		{
 		      JSONObject object = ja.getJSONObject(i);
+		      Long id = (long) object.get("id");
+		      Integer qnt = (int) object.getInt("qnt");
+		      Product p = findSingleProductById(id);
+		      
+		      SingleOrderItem soi = new SingleOrderItem();
+		      soi.setProduct(p);
+		      soi.setQuantity(qnt);
+		      tempsoi.add(soi);
 		      System.err.println(object);
 		}
-		
+		return tempsoi;
 	}
 } 
